@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Integration } from "./integration.model";
 
 const githubIntegration = async (code: string) => {
     try {
@@ -20,13 +21,20 @@ const githubIntegration = async (code: string) => {
           },
         });
     
-        const installations = userResponse.data.installations;
+        const installations = userResponse.data.installations[0];
+
+       
   
-        console.log(installations);
+        // console.log(installations);
         
-    
+        const integrationInfo = {
+            integrationId: installations.id,
+            type: 'github',
+            owner: installations.account.login,
+            appName: installations.app_slug,
+        }
         // Save installations info to the database
-        // ...
+        await Integration.create(integrationInfo)
 
         return true;
     

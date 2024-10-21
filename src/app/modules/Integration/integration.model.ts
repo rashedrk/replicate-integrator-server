@@ -1,17 +1,17 @@
 import { Schema, model } from "mongoose";
-import { TIssue } from "./issue.interface";
+import { TIntegration } from "./integration.inteface";
 
 
-const issueSchema = new Schema<TIssue>({
-    title: {
+const issueSchema = new Schema<TIntegration>({
+    integrationId: {
         type: String,
         required: true,
     },
-    message: {
+    type: {
         type: String,
         required: true,
     },
-    repo: {
+    appName: {
         type: String,
         required: true,
     },
@@ -25,4 +25,4 @@ const issueSchema = new Schema<TIssue>({
 });
 
 
-export const Issues = model<TIssue>('Issue', issueSchema);
+export const Integration = model<TIntegration>('Integration', issueSchema);
