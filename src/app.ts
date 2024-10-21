@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import { integrationRoutes } from "./app/modules/Integration/integration.route";
+import { issueRoutes } from "./app/modules/Issue/issue.route";
 
 
 const app: Application = express();
@@ -15,5 +16,6 @@ app.get('/', (req: Request, res: Response) => {
 // app.use('/api/v1', router);
 // Routes
 app.use('/integrate', integrationRoutes);
+app.use('/issue', issueRoutes);
 
 export default app;

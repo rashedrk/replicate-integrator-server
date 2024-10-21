@@ -15,7 +15,7 @@ const issueSchema = new Schema<TIssue>({
         type: String,
         required: true,
     },
-    owner: {
+    integrationId: {
         type: String,
         required: true,
     }

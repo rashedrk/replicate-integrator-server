@@ -36,7 +36,7 @@ const githubIntegration = async (code: string) => {
         // Save installations info to the database
         await Integration.create(integrationInfo)
 
-        return true;
+        return integrationInfo;
     
       } catch (error) {
         return false;
