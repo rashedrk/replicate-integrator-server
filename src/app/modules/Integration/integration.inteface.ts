@@ -3,4 +3,7 @@ export type TIntegration = {
     type: string;
     owner: string;
     appName: string;
+    accessToken: string;
+    refreshToken: string,
+    expiresAt: Date,
 }

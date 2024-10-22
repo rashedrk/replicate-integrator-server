@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getInstallationAccessToken } from "./githubAuth";
+import { getValidAccessToken } from "./githubAuth";
 
 type TGithubIssue = {
     installationId: number,
@@ -12,7 +12,7 @@ type TGithubIssue = {
 export const createGithubIssue = async (issue: TGithubIssue) => {
     const { installationId, owner, body, repo, title } = issue;
     try {
-        const token = await getInstallationAccessToken(installationId);
+        const token = await getValidAccessToken(installationId);
         const response = await axios.post(
             `https://api.github.com/repos/${owner}/${repo}/issues`,
             { title, body },

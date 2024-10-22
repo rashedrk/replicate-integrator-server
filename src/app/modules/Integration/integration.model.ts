@@ -18,7 +18,10 @@ const issueSchema = new Schema<TIntegration>({
     owner: {
         type: String,
         required: true,
-    }
+    },
+    accessToken: String,
+    refreshToken: String, 
+    expiresAt: Date,
 }, {
     timestamps: true,
     versionKey: false
