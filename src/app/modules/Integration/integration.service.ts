@@ -50,6 +50,38 @@ const githubIntegration = async (code: string) => {
   }
 }
 
+const removeGithubIntegration = async (integrationId: number) => {
+  try {
+    // Find the integration in the database
+    const integration = await Integration.findOne({ integrationId });
+
+    if (!integration) {
+      throw new AppError(HttpStatusCode.NotFound, 'Github integration not found');
+    }
+    
+
+    // Revoke the installation from GitHub
+    await axios.delete(
+      `https://api.github.com/app/installations/${integrationId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${integration.accessToken}`,
+          Accept: 'application/vnd.github.v3+json',
+        },
+      }
+    );
+
+    // Remove the integration from the database
+    await Integration.deleteOne({ integrationId });
+
+    return ;
+  } catch (error) {
+    console.error('Error disconnecting integration:', error);
+    throw new AppError(500, 'Failed to disconnect integration');
+  }
+}
+
 export const integrationServices = {
-  githubIntegration
+  githubIntegration,
+  removeGithubIntegration
 }

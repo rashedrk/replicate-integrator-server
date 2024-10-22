@@ -14,6 +14,7 @@ if (!GITHUB_APP_ID || !PRIVATE_KEY) {
 }
 
 
+
 export const refreshAccessToken = async (integrationId: number) => {
     const integration = await Integration.findOne({ integrationId });
 
