@@ -1,5 +1,6 @@
-import axios from "axios";
+import axios, { HttpStatusCode } from "axios";
 import { getValidAccessToken } from "./githubAuth";
+import AppError from "../Error/AppError";
 
 type TGithubIssue = {
     installationId: number,
@@ -27,6 +28,6 @@ export const createGithubIssue = async (issue: TGithubIssue) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         console.error('Error creating GitHub issue:', error.response?.data || error.message);
-        throw error;
+        throw new AppError(HttpStatusCode.BadRequest, "Error creating GitHub issue");
     }
 };

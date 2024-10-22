@@ -1,16 +1,16 @@
-import dotenv from 'dotenv';
-import axios from 'axios';
+import axios, { HttpStatusCode } from 'axios';
 import { Integration } from '../modules/Integration/integration.model';
+import config from '../config/config';
+import AppError from '../Error/AppError';
 
-dotenv.config();
 
-const GITHUB_APP_ID = process.env.GITHUB_APP_ID;
-const PRIVATE_KEY = process.env.GITHUB_PRIVATE_KEY?.replace(/\\n/g, '\n');
-const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID!;
-const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET!;
+const GITHUB_APP_ID = config.github_app_id;
+const PRIVATE_KEY = config.github_private_key?.replace(/\\n/g, '\n');
+const GITHUB_CLIENT_ID = config.github_client_id;
+const GITHUB_CLIENT_SECRET = config.github_client_secret;
 
 if (!GITHUB_APP_ID || !PRIVATE_KEY) {
-  throw new Error('Missing GitHub App credentials in environment variables');
+  throw new AppError(HttpStatusCode.BadRequest,'Missing GitHub App credentials in environment variables');
 }
 
 
@@ -18,7 +18,7 @@ export const refreshAccessToken = async (integrationId: number) => {
     const integration = await Integration.findOne({ integrationId });
 
     if (!integration || !integration.refreshToken) {
-        throw new Error('Refresh token not found for the given integration ID');
+        throw new AppError(HttpStatusCode.BadRequest,'Refresh token not found for the given integration ID');
     }
 
     try {
@@ -45,7 +45,7 @@ export const refreshAccessToken = async (integrationId: number) => {
         return integration.accessToken;
     } catch (error) {
         console.error('Error refreshing access token:', error);
-        throw new Error('Could not refresh access token');
+        throw new AppError(HttpStatusCode.BadRequest,'Could not refresh access token');
     }
 };
 
@@ -54,7 +54,7 @@ export const getValidAccessToken = async (integrationId: number) => {
   const integration = await Integration.findOne({ integrationId });
 
   if (!integration) {
-      throw new Error('Integration not found');
+      throw new AppError(HttpStatusCode.NotFound,'Integration not found');
   }
 
   const now = new Date();

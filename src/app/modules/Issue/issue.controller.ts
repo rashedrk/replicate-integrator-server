@@ -1,25 +1,34 @@
-import { Request, Response } from "express";
 import { issueServices } from "./issue.service";
+import catchAsync from "../../utils/catchAsync";
+import sendResponse from "../../utils/sendResponse";
+import { HttpStatusCode } from "axios";
 
-const createGithubIssue = async (req: Request, res: Response) => {
-    try {
-        const payload = req.body;
+const createGithubIssue = catchAsync(async (req, res) => {
 
-        const result = await issueServices.addGithubIssue(payload);
+    const payload = req.body;
 
-        res.status(200).json(result);
-    } catch (error) {
-        res.status(200).send("issue creation failed");
-    }
-};
+    const result = await issueServices.addGithubIssue(payload);
+
+    sendResponse(res, {
+        statusCode: HttpStatusCode.Created,
+        success: true,
+        message: "Issue created successfully",
+        data: result
+    })
+})
 
 
-const getAccessibleRepoList = async (req: Request, res: Response) => {
+const getAccessibleRepoList = catchAsync(async (req, res) => {
     const { id } = req.params;
     const result = await issueServices.getRepositories(Number(id))
-    res.status(200).json(result);
+    sendResponse(res, {
+        statusCode: HttpStatusCode.Ok,
+        success: true,
+        message: "Repository retrieved successfully",
+        data: result
+    })
 
-};
+});
 
 export const issueControllers = {
     createGithubIssue,

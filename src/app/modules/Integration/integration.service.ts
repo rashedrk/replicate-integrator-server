@@ -1,11 +1,13 @@
-import axios from "axios";
+import axios, { HttpStatusCode } from "axios";
 import { Integration } from "./integration.model";
+import AppError from "../../Error/AppError";
+import config from "../../config/config";
 
 const githubIntegration = async (code: string) => {
   try {
     const tokenResponse = await axios.post('https://github.com/login/oauth/access_token', {
-      client_id: process.env.GITHUB_CLIENT_ID,
-      client_secret: process.env.GITHUB_CLIENT_SECRET,
+      client_id: config.github_client_id,
+      client_secret: config.github_client_secret,
       code,
     }, {
       headers: {
@@ -44,7 +46,7 @@ const githubIntegration = async (code: string) => {
     return integrationInfo;
 
   } catch (error) {
-    return false;
+    throw new AppError(HttpStatusCode.BadRequest, 'Github integration failed!')
   }
 }
 

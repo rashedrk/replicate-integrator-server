@@ -3,6 +3,7 @@ import cors from "cors";
 import { integrationRoutes } from "./app/modules/Integration/integration.route";
 import { issueRoutes } from "./app/modules/Issue/issue.route";
 import dotenv from 'dotenv';
+import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 
 dotenv.config();
 
@@ -19,5 +20,7 @@ app.get('/', (req: Request, res: Response) => {
 // Routes
 app.use('/integrate', integrationRoutes);
 app.use('/issue', issueRoutes);
+
+app.use(globalErrorHandler)
 
 export default app;

@@ -1,10 +1,9 @@
-import { Request, Response } from 'express';
 import { integrationServices } from './integration.service';
+import catchAsync from '../../utils/catchAsync';
 
-const githubIntegration = async (req: Request, res: Response) => {
+const githubIntegration = catchAsync(async (req, res) => {
     const { code } = req.query;
 
-    try {
         const response = await integrationServices.githubIntegration(code as string)
 
         if (response) {
@@ -13,11 +12,7 @@ const githubIntegration = async (req: Request, res: Response) => {
         else if (response === false) {
             res.status(500).json({ error: 'Error during GitHub App installation' });
         }
-       
-    } catch (error) {
-        res.status(500).json({ error: 'Error during GitHub App installation' });
-    }
-};
+})
 
 
 export const integrationControllers = {

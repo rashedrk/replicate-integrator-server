@@ -1,17 +1,18 @@
 
-import axios from "axios";
+import axios, { HttpStatusCode } from "axios";
 import { getValidAccessToken } from "../../utils/githubAuth";
 import { createGithubIssue } from "../../utils/githubIssueCreator";
 import { Integration } from "../Integration/integration.model";
 import { TIssue } from "./issue.interface";
 import { Issues } from "./issue.model";
+import AppError from "../../Error/AppError";
 
 
 const addGithubIssue = async (payload: TIssue) => {
   try {
     // Validate the payload
     if (!payload.integrationId || !payload.repo || !payload.title || !payload.message) {
-      throw new Error('Missing required fields in the payload');
+      throw new AppError(HttpStatusCode.NotFound, 'Missing required fields in the payload')
     }
 
 
@@ -19,7 +20,7 @@ const addGithubIssue = async (payload: TIssue) => {
     // Fetch the integration data to get owner info
     const integration = await Integration.findOne({ integrationId: payload.integrationId });
     if (!integration) {
-      throw new Error(`Integration not found for ID: ${payload.integrationId}`);
+      throw new AppError(HttpStatusCode.NotFound, `Integration not found for ID: ${payload.integrationId}`)
     }
 
     // Create the issue on GitHub
@@ -41,7 +42,7 @@ const addGithubIssue = async (payload: TIssue) => {
 
   } catch (error) {
     console.error('Error creating GitHub issue:', error);
-    throw error; // Re-throw error if you want to handle it upstream
+    throw new AppError(HttpStatusCode.NotFound, 'Error creating GitHub issue')
   }
 };
 
@@ -53,7 +54,7 @@ const getRepositories = async (integrationId: number) => {
 
 
     if (!integration) {
-      throw new Error('Integration not found');
+      throw new AppError(HttpStatusCode.NotFound, 'Integration not found')
     }
 
     const response = await axios.get(
@@ -72,7 +73,7 @@ const getRepositories = async (integrationId: number) => {
     return repositoryNames;
   } catch (error) {
     console.error('Error fetching repositories:', error);
-    throw new Error('Could not fetch repositories');
+    throw new AppError(HttpStatusCode.NotFound, 'Could not fetch repositories')
   }
 }
 

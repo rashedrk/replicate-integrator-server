@@ -7,9 +7,9 @@ export default {
   NODE_ENV: process.env.NODE_ENV,
   port: process.env.PORT,
   database_url: process.env.DATABASE_URL,
-  bcyrpt_salt_rounds: process.env.BCRYPT_SALT_ROUNDS,
-  jwt_access_secret: process.env.JWT_ACCESS_SECRET,
-  jwt_access_expires_in: process.env.JWT_ACCESS_EXPIRES_IN,
-  jwt_refresh_secret: process.env.JWT_REFRESH_SECRET,
-  jwt_refresh_expires_in: process.env.JWT_REFRESH_EXPIRES_IN
+  github_app_id: process.env.GITHUB_APP_ID,
+  github_client_id: process.env.GITHUB_CLIENT_ID,
+  github_client_secret: process.env.GITHUB_CLIENT_SECRET,
+  github_private_key: process.env.GITHUB_PRIVATE_KEY,
+  base_url: process.env.BASE_URL
 };
