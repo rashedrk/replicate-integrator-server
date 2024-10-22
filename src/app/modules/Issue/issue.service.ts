@@ -1,4 +1,6 @@
 
+import axios from "axios";
+import { getValidAccessToken } from "../../utils/githubAuth";
 import { createGithubIssue } from "../../utils/githubIssueCreator";
 import { Integration } from "../Integration/integration.model";
 import { TIssue } from "./issue.interface";
@@ -12,7 +14,7 @@ const addGithubIssue = async (payload: TIssue) => {
       throw new Error('Missing required fields in the payload');
     }
 
- 
+
 
     // Fetch the integration data to get owner info
     const integration = await Integration.findOne({ integrationId: payload.integrationId });
@@ -22,17 +24,14 @@ const addGithubIssue = async (payload: TIssue) => {
 
     // Create the issue on GitHub
     const issue = {
-      installationId: Number(payload.integrationId) ,
-      owner: integration.owner, 
-      repo: payload.repo, 
+      installationId: Number(payload.integrationId),
+      owner: integration.owner,
+      repo: payload.repo,
       title: payload.title,
       body: payload.message,
     }
 
-    const response = await  createGithubIssue(issue);
-    
-    
-
+    const response = await createGithubIssue(issue);
 
     // console.log('Issue created successfully:', response);
 
@@ -40,15 +39,46 @@ const addGithubIssue = async (payload: TIssue) => {
     const result = await Issues.create({ ...payload, githubIssueId: response.id });
     return result;
 
-    return response.data; // Return the created issue data or any other relevant info
   } catch (error) {
     console.error('Error creating GitHub issue:', error);
     throw error; // Re-throw error if you want to handle it upstream
   }
 };
 
+const getRepositories = async (integrationId: number) => {
+  try {
+    const integration = await Integration.findOne({ integrationId });
+
+    const accessToken = await getValidAccessToken(integrationId);
+
+
+    if (!integration) {
+      throw new Error('Integration not found');
+    }
+
+    const response = await axios.get(
+      `https://api.github.com/user/installations/${integrationId}/repositories`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          Accept: 'application/vnd.github.v3+json',
+        },
+      }
+    );
+    const repositories = response.data.repositories;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const repositoryNames = repositories.map((repo: any) => repo.name);
+
+    return repositoryNames;
+  } catch (error) {
+    console.error('Error fetching repositories:', error);
+    throw new Error('Could not fetch repositories');
+  }
+}
+
 
 
 export const issueServices = {
-  addGithubIssue
+  addGithubIssue,
+  getRepositories
 }

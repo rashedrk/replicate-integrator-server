@@ -11,9 +11,17 @@ const createGithubIssue = async (req: Request, res: Response) => {
     } catch (error) {
         res.status(200).send("issue creation failed");
     }
+};
+
+
+const getAccessibleRepoList = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const result = await issueServices.getRepositories(Number(id))
+    res.status(200).json(result);
 
 };
 
 export const issueControllers = {
-    createGithubIssue
+    createGithubIssue,
+    getAccessibleRepoList
 }
