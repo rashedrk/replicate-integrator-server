@@ -1,18 +1,18 @@
-import { getAuthenticatedOctokit } from "../../utils/githubAuth";
+
+import { createGithubIssue } from "../../utils/githubIssueCreator";
 import { Integration } from "../Integration/integration.model";
 import { TIssue } from "./issue.interface";
 import { Issues } from "./issue.model";
 
 
-const createGithubIssue = async (payload: TIssue) => {
+const addGithubIssue = async (payload: TIssue) => {
   try {
     // Validate the payload
     if (!payload.integrationId || !payload.repo || !payload.title || !payload.message) {
       throw new Error('Missing required fields in the payload');
     }
 
-    // Get authenticated Octokit instance
-    const octokit = await getAuthenticatedOctokit(Number(payload.integrationId));
+ 
 
     // Fetch the integration data to get owner info
     const integration = await Integration.findOne({ integrationId: payload.integrationId });
@@ -21,18 +21,24 @@ const createGithubIssue = async (payload: TIssue) => {
     }
 
     // Create the issue on GitHub
-    const response = await octokit.rest.issues.create({
-      owner: integration.owner, // Ensure this is valid
-      repo: payload.repo, // Ensure this is valid
+    const issue = {
+      installationId: Number(payload.integrationId) ,
+      owner: integration.owner, 
+      repo: payload.repo, 
       title: payload.title,
       body: payload.message,
-    });
+    }
 
-    console.log('Issue created successfully:', response.data);
+    const response = await  createGithubIssue(issue);
+    
+    
 
-    // Optionally save the created issue details in your database
-    // const result = await Issues.create({ ...payload, githubIssueId: response.data.id });
-    // return result;
+
+    // console.log('Issue created successfully:', response);
+
+    // save the created issue details in your database
+    const result = await Issues.create({ ...payload, githubIssueId: response.id });
+    return result;
 
     return response.data; // Return the created issue data or any other relevant info
   } catch (error) {
@@ -44,5 +50,5 @@ const createGithubIssue = async (payload: TIssue) => {
 
 
 export const issueServices = {
-  createGithubIssue
+  addGithubIssue
 }

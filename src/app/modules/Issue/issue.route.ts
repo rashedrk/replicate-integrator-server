@@ -4,8 +4,9 @@ import { issueControllers } from './issue.controller';
 
 
 
+
 const router = Router();
 
-router.get('/create', issueControllers.createGithubIssue);
+router.post('/create', issueControllers.createGithubIssue);
 
 export const issueRoutes = router;

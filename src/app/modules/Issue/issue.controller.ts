@@ -5,7 +5,7 @@ const createGithubIssue = async (req: Request, res: Response) => {
     try {
         const payload = req.body;
 
-        const result = await issueServices.createGithubIssue(payload);
+        const result = await issueServices.addGithubIssue(payload);
 
         res.status(200).json(result);
     } catch (error) {
